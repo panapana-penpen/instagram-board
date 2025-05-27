@@ -2,7 +2,8 @@ import * as ImagePicker from 'expo-image-picker';
 import { addDoc, collection, serverTimestamp } from 'firebase/firestore';
 import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
 import React, { useState } from 'react';
-import { Alert, Button, Image, StyleSheet, TextInput, View } from 'react-native';
+import { Button, Image, StyleSheet, TextInput } from 'react-native';
+import { ScrollView } from 'react-native-web';
 import { db, storage } from '../lib/firebase';
 
 export default function CreatePost() {
@@ -22,7 +23,7 @@ export default function CreatePost() {
 
   const uploadPost = async () => {
     if (!image || !caption) {
-      Alert.alert('すべての項目を入力してください');
+      alert('すべての項目を入力してください');
       return;
     }
 
@@ -42,27 +43,28 @@ export default function CreatePost() {
         createdAt: serverTimestamp(),
       });
 
-      Alert.alert('投稿が完了しました');
+      alert('投稿が完了しました');
       setImage(null);
       setCaption('');
     } catch (error) {
       console.error(error);
-      Alert.alert('投稿に失敗しました');
+      alert('投稿に失敗しました');
     }
   };
 
   return (
-    <View style={styles.container}>
+    <ScrollView style={styles.container}>
       <Button title="画像を選択" onPress={pickImage} />
-      {image && <Image source={{ uri: image }} style={styles.image} />}
+      {image && <Image source={{ uri: image }} style={styles.image} resizeMode="contain"/>}
       <TextInput
-        placeholder="キャプションを入力"
+        placeholder="説明を入力"
+        placeholderTextColor={"#888"}
         value={caption}
         onChangeText={setCaption}
         style={styles.input}
       />
       <Button title="投稿する" onPress={uploadPost} />
-    </View>
+    </ScrollView>
   );
 }
 
@@ -74,7 +76,7 @@ const styles = StyleSheet.create({
   },
   image: {
     width: '100%',
-    height: 400,
+    height: 500,
     marginVertical: 12,
   },
   input: {
